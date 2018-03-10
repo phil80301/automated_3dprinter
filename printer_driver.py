@@ -11,7 +11,7 @@ import sys
 import time
 
 
-class SerialSender:
+class Printer:
 	"""
 		A utility class for communication with the Arduino from python.
 		Intended for g-code only. Raises ValueException if the arduino
@@ -114,10 +114,3 @@ class SerialSender:
 
 		if self._verbose:
 			print >> sys.stdout, "Serial Open?: " + str(self.ser.isOpen())
-
-
-printer = SerialSender("/dev/ttyACM0", 9600, verbose=True)
-printer.write("G90")
-printer.write("G1 Z10 F4800")
-# printer.write("G1 X0 F3600")
-# printer.write("M32 top.gcode")
