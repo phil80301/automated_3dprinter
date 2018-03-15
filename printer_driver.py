@@ -100,11 +100,11 @@ class Printer:
 			if expect.lower() in response.lower():
 				if self._verbose:
 					print "< " + response
-				return reponse
+				return response
 			else:
 				#Just print the response since it is useful data or an error message
 				print "< " + response
-                                return reponse
+                                return response
 
 
 	def close():
