@@ -23,11 +23,15 @@ def print_from_file(filename, printer):
             printer.write("M23 " + sd_file)
             printer.write("M400")
             printer.write("M24")
-            printer.write("M27")
-            for i in range(100000):
-                time.sleep(0.2)
-                printer.write("M400")
-                printer.write("M27")
+            done = False
+            while not done:
+                time.sleep(10)
+                response = printer.write("M27")
+                ratio = [int(s) for s in response.split() if s.isdigit()]
+                if float(ratio[0])/float(ratio[1]) >= 0.9999:
+                    done = True
+                    print("Finished Printing")
+
             removal_pos(printer)
             printer.write("M106 S0") # turn off fan
 

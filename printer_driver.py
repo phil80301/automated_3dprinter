@@ -75,11 +75,11 @@ class Printer:
 		#Skip blank blocks.
 		if len(block) == 0:
                         print("Blank Block")
-			return
+			return None
 
 		self.ser.write(block + "\n")
                 print(block)
-		self.read("OK")
+		return self.read("OK")
 
 	def read(self, expect=None):
 		"""
@@ -95,15 +95,16 @@ class Printer:
 		while True:
 			response = self.ser.readline().strip()
 			if expect is None:
-				return
+				return None
 
 			if expect.lower() in response.lower():
 				if self._verbose:
 					print "< " + response
-				return
+				return reponse
 			else:
 				#Just print the response since it is useful data or an error message
 				print "< " + response
+                                return reponse
 
 
 	def close():
