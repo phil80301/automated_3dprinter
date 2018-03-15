@@ -23,9 +23,11 @@ def print_from_file(filename, printer):
             printer.write("M23 " + sd_file)
             printer.write("M400")
             printer.write("M24")
-            for i in range(1000000):
+            printer.write("M27")
+            for i in range(100000):
                 time.sleep(0.2)
                 printer.write("M400")
+                printer.write("M27")
             removal_pos(printer)
             printer.write("M106 S0") # turn off fan
 
