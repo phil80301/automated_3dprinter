@@ -64,6 +64,8 @@ class Printer:
 			This routine also removes all whitespace before sending it to the arduino,
 			which is handy for gcode, but will screw up if you try to do binary communications.
 		"""
+                self.ser.flushInput()
+                self.ser.flushOutput()
 		if self._verbose:
 			print "> " + block
 
