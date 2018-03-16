@@ -1,0 +1,2 @@
+Images from the webcam will be saved here
+
