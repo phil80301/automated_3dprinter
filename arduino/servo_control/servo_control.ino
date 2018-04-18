@@ -3,8 +3,8 @@
 Servo left_servo;
 Servo right_servo;
 
-#define LEFT_SERVO_PIN 6
-#define RIGHT_SERVO_PIN 7
+#define LEFT_SERVO_PIN 5
+#define RIGHT_SERVO_PIN 6
 
 #define LEFT_SERVO_DEFAULT_US 1500
 #define RIGHT_SERVO_DEFAULT_US 1500
@@ -15,9 +15,9 @@ int switch_val;
 void setup() {
   Serial.begin(115200);
   // Setting Up Servos
-  left_servo.attach(5 );
-  //right_servo.attach(RIGHT_SERVO_PIN);
-  left_servo.writeMicroseconds(LEFT_SERVO_DEFAULT_US);
+  left_servo.attach(LEFT_SERVO_PIN);
+  right_servo.attach(RIGHT_SERVO_PIN);
+  //left_servo.writeMicroseconds(LEFT_SERVO_DEFAULT_US);
   //right_servo.writeMicroseconds(RIGHT_SERVO_DEFAULT_US);
 
   // Setting up LimitSwitch
@@ -35,8 +35,8 @@ void open90(){
 
 
 void close90(){
-  //right_servo.write(90);
-  left_servo.write(180);
+  right_servo.write(90);
+  left_servo.write(90);
 }
 
 
@@ -95,7 +95,7 @@ void loop() {
           Serial.println("done");
           break;
       }
-      delay(15);  
+      delay(100);  
     }
 
 }
