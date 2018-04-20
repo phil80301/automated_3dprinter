@@ -32,10 +32,11 @@ class Printer:
         self.is_mp = mp
 
         if self._verbose:
-            print >> sys.stdout, "Opening serial port: " + port
+            print( "Opening serial port: " + port)
 
         #Timeout value 10" max travel, 1RPM, 20 threads/in = 200 seconds
-        self.ser = serial.Serial(port, baud, xonxoff=True, timeout=5)
+        # self.ser = serial.Serial(port, baud, rtscts=True, timeout=15)
+        self.ser = serial.Serial(port, baud, dsrdtr=True, timeout=15)
 
         time.sleep(0.1)
         time.sleep(0.1)
@@ -44,8 +45,8 @@ class Printer:
         self.ser.reset_output_buffer()
 
         if self._verbose:
-            print >> sys.stdout, "Serial Open?: " + str(self.ser.isOpen())
-            print >> sys.stdout, "Baud Rate: " + str(self.ser.baudrate)
+            print(sys.stdout, "Serial Open?: " + str(self.ser.isOpen()))
+            print(sys.stdout, "Baud Rate: " + str(self.ser.baudrate))
 
     def reset(self):
         """
@@ -54,7 +55,7 @@ class Printer:
         """
         #Reboot the arduino, and wait for it's response
         if self._verbose:
-            print "Resetting arduino..."
+            print("Resetting arduino...")
 
         self.ser.setDTR(0)
         # There is presumably some latency required.
@@ -67,7 +68,7 @@ class Printer:
         """
             Writes one block of g-code out to arduino and waits for an "ok".
             This version will wait for an "ok" before returning and prints any intermediate output received.
-            No error will be raised if non-ok response is received.  Loop in read() is infinite if "ok"
+            No error will be raised if non-ok response is received.  Loop in read() is infinite if "ok")i
             does not come back!
             This routine also removes all whitespace before sending it to the arduino,
             which is handy for gcode, but will screw up if you try to do binary communications.
@@ -75,7 +76,7 @@ class Printer:
         self.ser.flushInput()
         self.ser.flushOutput()
         if self._verbose:
-            print "> " + block
+            print("> " + block)
 
         # The arduino GCode interperter firmware doesn't like whitespace
         # and if there's anything other than space and tab, we have other problems.
@@ -86,7 +87,7 @@ class Printer:
             return None
 
         self.ser.flush()
-        self.ser.write(block + "\n")
+        self.ser.write( (block + "\n").encode() )
         # print(block)
         if resp:
             return None
@@ -113,7 +114,7 @@ class Printer:
 
             if expect.lower() in response.lower():
                 if self._verbose:
-                    print "< " + response
+                    print("< " + response)
                 return response
             else:
                 #Just print the response since it is useful data or an error message
@@ -126,11 +127,11 @@ class Printer:
             Closes the serial port, terminating communications with the arduino.
         """
         if self._verbose:
-            print >> sys.stdout, "Closing serial port."
+            print(sys.stdout, "Closing serial port.")
         self.ser.close()
 
         if self._verbose:
-            print >> sys.stdout, "Serial Open?: " + str(self.ser.isOpen())
+            print(sys.stdout, "Serial Open?: " + str(self.ser.isOpen()))
 
     def start_print_from_sd(self, sd_file):
         self.busy = True

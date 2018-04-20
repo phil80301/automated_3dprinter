@@ -28,10 +28,10 @@ def print_from_file(filename, printer):
             while not done:
                 time.sleep(10)
                 response = printer.write("M27")
-		print(response)
+                print(response)
                 ratio = [int(s) for s in response.split()[-1].split("/") if s.isdigit()]
-		if not len(ratio) == 2:
-			continue
+                if not len(ratio) == 2:
+                    continue
                 if float(ratio[0])/float(ratio[1]) >= 0.9999:
                     done = True
                     print("Finished Printing")
