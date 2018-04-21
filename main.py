@@ -25,7 +25,7 @@ def connect_to_printers():
     printer_list = []
     for p, mp in zip(ids, mp_list):
         printer_list.append(Printer(prefix + p, baud_rate, mp=mp))
-    time.sleep(1)	
+    time.sleep(1)
 
     return printer_list
 

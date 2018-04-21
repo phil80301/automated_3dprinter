@@ -29,20 +29,24 @@ void setup() {
 int mode = -1;
 
 void open90(){
-  right_servo.write(0);
-  left_servo.write(0);
+  right_servo.write(180);
+  delay(10);
+  left_servo.write(180);
+  delay(10);  
 }
 
 
 void close90(){
-  right_servo.write(90);
-  left_servo.write(90);
+  right_servo.write(92);
+  delay(10);
+  left_servo.write(92);
+  delay(10);  
 }
 
 
 void flexup(){
-  right_servo.write(0);
-  left_servo.write(0);
+  right_servo.write(92-45);
+  left_servo.write(92+45);
 }
 
 
@@ -95,7 +99,7 @@ void loop() {
           Serial.println("done");
           break;
       }
-      delay(100);  
+      delay(1000);  
     }
 
 }
