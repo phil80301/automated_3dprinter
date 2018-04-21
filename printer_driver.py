@@ -30,16 +30,21 @@ class Printer:
         self._verbose = verbose
         self.busy = False
         self.is_mp = mp
+        print(port)
+        print(mp)
 
         if self._verbose:
             print( "Opening serial port: " + port)
 
         #Timeout value 10" max travel, 1RPM, 20 threads/in = 200 seconds
         # self.ser = serial.Serial(port, baud, rtscts=True, timeout=15)
-        self.ser = serial.Serial(port, baud, rtscts=True, timeout=2.0)
+        if self.is_mp:
+            self.ser = serial.Serial(port, baud, rtscts=True, timeout=5.0)
+        else:
+            self.ser = serial.Serial(port, baud, rtscts=False, timeout=5.0)
 
-        time.sleep(0.1)
-        time.sleep(0.1)
+        time.sleep(0.5)
+        time.sleep(0.5)
 
         self.ser.reset_input_buffer()
         self.ser.reset_output_buffer()
@@ -59,9 +64,9 @@ class Printer:
 
         self.ser.setDTR(0)
         # There is presumably some latency required.
-        time.sleep(1)
+        time.sleep(2)
         self.ser.setDTR(1)
-        time.sleep(3)
+        time.sleep(4)
         self.read("Start")
 
     def write(self, block, resp=False):
@@ -75,7 +80,9 @@ class Printer:
         """
         self.ser.flushInput()
         self.ser.flushOutput()
-        time.sleep(1)
+        time.sleep(2.5)
+        print(" ")
+        print("__________________________")
         if self._verbose:
             print("> " + block)
 
@@ -88,8 +95,11 @@ class Printer:
             return None
 
         self.ser.flush()
-        time.sleep(1)
-        self.ser.write( (block + "\n").encode() )
+        time.sleep(3.5)
+        
+	# self.ser.write( (block + "\n").encode() )
+        self.ser.write( (block + "\n"))
+        time.sleep(3.5)
         print("Writing : " + block)
         if resp:
             return None
@@ -108,13 +118,12 @@ class Printer:
         #It WILL return "ok" once the command has finished sending and completed.
         print(expect)
         while True:
-            print("__________________________")
-            response = self.ser.readline().strip().decode("utf-8")
+            time.sleep(2)
+            response = self.ser.readline().strip()
             # response = self.ser.readline().strip()
             print("response", response)
             print("response type", type(response))
-            if expect is None:
-                return None
+            if expect is None: return None
 
             if expect.lower() in response.lower():
                 if self._verbose:
@@ -186,11 +195,7 @@ class Printer:
 
     def startup(self):
         self.write("G28 X Y") # Home X and Y axis
-        print("x")
         self.write("M104 S199") # Set extruder temperature to 199 degrees celcius
-        print("a")
         self.write("M140 S59k") # Set bed temperature to 59 degrees celcius
-        print("a")
         self.write("M21") # Load SD card
-        print("c")
         time.sleep(0.4)
