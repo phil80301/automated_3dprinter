@@ -28,10 +28,10 @@ def print_from_file(filename, printer):
             while not done:
                 time.sleep(10)
                 response = printer.write("M27")
-		print(response)
+                print(response)
                 ratio = [int(s) for s in response.split()[-1].split("/") if s.isdigit()]
-		if not len(ratio) == 2:
-			continue
+                if not len(ratio) == 2:
+                    continue
                 if float(ratio[0])/float(ratio[1]) >= 0.9999:
                     done = True
                     print("Finished Printing")
@@ -42,16 +42,23 @@ def print_from_file(filename, printer):
 
 
 print_file = "print_que.txt"
-printer = Printer("/dev/ttyACM0", 9600, verbose=True)
+# printer = Printer("/dev/serial/by-id/usb-Malyan_System_Malyan_3D_Printer_207E39595250-if00", 9600, verbose=True)
+# printer = Printer("/dev/serial/by-id/usb-Malyan_System_Malyan_3D_Printer_205932725748-if00", 115200, verbose=True)
+printer = Printer("COM13", 115200, verbose=True)
 time.sleep(0.5)
-printer.write("M21")
+printer.write("G28 X Y", resp=True)
+printer.write("M21", resp=True)
+printer.write("M105", resp=True)
 time.sleep(0.2)
-printer.write("G28")
-printer.write("M400")
-printer.write("G90")
-printer.write("G0 X0 Y0 Z10 F10000")
-printer.write("M400")
-print_from_file(print_file, printer)
+printer.write("M105", resp=False)
+time.sleep(0.2)
+printer.write("M105", resp=False)
+time.sleep(0.2)
+# printer.write("M400")
+# printer.write("G90")
+# printer.write("G0 X0 Y0 Z10 F10000")
+# printer.write("M400")
+# print_from_file(print_file, printer)
 
 # printer.write("G90")
 # printer.write("G1 X30 F4800")
