@@ -14,14 +14,14 @@ def connect_to_printers():
     #ids.append("6")
     #ids.append("4")
 
-    # ids.append("usb-Malyan_System_Malyan_3D_Printer_2058324D5748-if00")
-    # mp_list.append(True)
+    ids.append("usb-Malyan_System_Malyan_3D_Printer_2058324D5748-if00")
+    mp_list.append(True)
     ids.append("usb-Malyan_System_LTD._Malyan_3D_Printer_Port_8D8B33775656-if00")
     mp_list.append(False)
-    # ids.append("usb-Malyan_System_Malyan_3D_Printer_205932725748-if00")
-    # mp_list.append(True)
-    # ids.append("usb-Malyan_System_Malyan_3D_Printer_207E39595250-if00")
-    # mp_list.append(True)
+    ids.append("usb-Malyan_System_Malyan_3D_Printer_205932725748-if00")
+    mp_list.append(True)
+    ids.append("usb-Malyan_System_Malyan_3D_Printer_207E39595250-if00")
+    mp_list.append(True)
     printer_list = []
     for p, mp in zip(ids, mp_list):
         printer_list.append(Printer(prefix + p, baud_rate, mp=mp))

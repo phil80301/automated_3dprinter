@@ -78,7 +78,10 @@ class Printer:
             This routine also removes all whitespace before sending it to the arduino,
             which is handy for gcode, but will screw up if you try to do binary communications.
         """
+        self.ser.flush()
+        time.sleep(1.5)
         self.ser.flushInput()
+        time.sleep(1.5)
         self.ser.flushOutput()
         time.sleep(2.5)
         print(" ")
@@ -94,10 +97,8 @@ class Printer:
             print("Blank Block")
             return None
 
-        self.ser.flush()
-        time.sleep(3.5)
-        
-	# self.ser.write( (block + "\n").encode() )
+
+        # self.ser.write( (block + "\n").encode() )
         self.ser.write( (block + "\n"))
         time.sleep(3.5)
         print("Writing : " + block)
@@ -118,8 +119,10 @@ class Printer:
         #It WILL return "ok" once the command has finished sending and completed.
         print(expect)
         while True:
-            time.sleep(2)
+            time.sleep(1)
             response = self.ser.readline().strip()
+            time.sleep(1)
+            self.ser.flush()
             # response = self.ser.readline().strip()
             print("response", response)
             print("response type", type(response))
@@ -152,11 +155,7 @@ class Printer:
         print("Printing file: " + sd_file)
         print(self.write("M23 " + sd_file))
         time.sleep(0.5)
-        self.write("M400")
-        time.sleep(0.5)
         print(self.write("M24"))
-        time.sleep(0.5)
-        print(self.write("M400"))
         time.sleep(0.5)
 
     def is_busy(self):
@@ -164,7 +163,7 @@ class Printer:
 
     def is_finished(self):
         for _ in range(1):
-            time.sleep(10)
+            time.sleep(1)
             response = self.write("M27") # check on SD print status
             if response == "":
                 return False
