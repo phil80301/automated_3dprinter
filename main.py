@@ -5,16 +5,17 @@ def connect_to_printers():
     ids = []
     baud_rate = 9600
     prefix = "/dev/serial/by-id/"
-    # prefix = "COM"
+    prefix = "COM"
 
     # ids.append("13")
-    # ids.append("4")
-    # ids.append("5")
-    # ids.append("6")
-    ids.append("usb-Malyan_System_Malyan_3D_Printer_2058324D5748-if00")
-    ids.append("usb-Malyan_System_LTD._Malyan_3D_Printer_Port_8D8B33775656-if00")
-    ids.append("usb-Malyan_System_Malyan_3D_Printer_205932725748-if00")
-    ids.append("usb-Malyan_System_Malyan_3D_Printer_207E39595250-if00")
+    ids.append("5")
+    ids.append("7")
+    #ids.append("6")
+    #ids.append("4")
+    # ids.append("usb-Malyan_System_Malyan_3D_Printer_2058324D5748-if00")
+    # ids.append("usb-Malyan_System_LTD._Malyan_3D_Printer_Port_8D8B33775656-if00")
+    # ids.append("usb-Malyan_System_Malyan_3D_Printer_205932725748-if00")
+    # ids.append("usb-Malyan_System_Malyan_3D_Printer_207E39595250-if00")
     printer_list = [Printer(prefix + id_i, baud_rate) for id_i in ids]
     return printer_list
 
@@ -29,8 +30,14 @@ def get_prints(file_name):
     return print_list, len(print_list)
 
 
-def remove_print(printer_index):
+def remove_print(printer_index, printer):
     print("Removing Print from Printer {}".format(printer_index))
+    self.write("M104 S210") # Set extruder temperature to 199 degrees celcius
+    print("a")
+    self.write("M140 S61k") # Set bed temperature to 59 degrees celcius
+    print("a")
+    time.sleep(0.4)
+
     pass
 
 def main():
@@ -52,7 +59,7 @@ def main():
             # only check for if parts are done
             for i, p in enumerate(printers):
                 if p.is_finished():
-                    remove_print(i)
+                    remove_print(i, p)
                 else:
                     print("Printer {} Not Finished yet".format(i))
         else:
@@ -65,7 +72,7 @@ def main():
                     continue
                 else:
                     if p.is_finished():
-                        remove_print(i)
+                        remove_print(i, p)
                     else:
                         print("Printer {} Not Finished yet".format(i))
         time.sleep(0.0)

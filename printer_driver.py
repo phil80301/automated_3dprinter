@@ -36,7 +36,7 @@ class Printer:
 
         #Timeout value 10" max travel, 1RPM, 20 threads/in = 200 seconds
         # self.ser = serial.Serial(port, baud, rtscts=True, timeout=15)
-        self.ser = serial.Serial(port, baud, dsrdtr=True, timeout=2.0)
+        self.ser = serial.Serial(port, baud, rtscts=True, timeout=2.0)
 
         time.sleep(0.1)
         time.sleep(0.1)
@@ -75,6 +75,7 @@ class Printer:
         """
         self.ser.flushInput()
         self.ser.flushOutput()
+        time.sleep(1)
         if self._verbose:
             print("> " + block)
 
@@ -87,6 +88,7 @@ class Printer:
             return None
 
         self.ser.flush()
+        time.sleep(1)
         self.ser.write( (block + "\n").encode() )
         print("Writing : " + block)
         if resp:
@@ -107,8 +109,10 @@ class Printer:
         print(expect)
         while True:
             print("__________________________")
-            response = self.ser.readline().strip()
+            response = self.ser.readline().strip().decode("utf-8")
+            # response = self.ser.readline().strip()
             print("response", response)
+            print("response type", type(response))
             if expect is None:
                 return None
 
@@ -187,6 +191,6 @@ class Printer:
         print("a")
         self.write("M140 S59k") # Set bed temperature to 59 degrees celcius
         print("a")
-        self.write("M21") # Set bed temperature to 59 degrees celcius
+        self.write("M21") # Load SD card
         print("c")
         time.sleep(0.4)
