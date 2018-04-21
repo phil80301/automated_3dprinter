@@ -36,7 +36,7 @@ class Printer:
 
         #Timeout value 10" max travel, 1RPM, 20 threads/in = 200 seconds
         # self.ser = serial.Serial(port, baud, rtscts=True, timeout=15)
-        self.ser = serial.Serial(port, baud, dsrdtr=True, timeout=15)
+        self.ser = serial.Serial(port, baud, dsrdtr=True, timeout=2.0)
 
         time.sleep(0.1)
         time.sleep(0.1)
@@ -88,7 +88,7 @@ class Printer:
 
         self.ser.flush()
         self.ser.write( (block + "\n").encode() )
-        # print(block)
+        print("Writing : " + block)
         if resp:
             return None
         return self.read("OK")
@@ -153,6 +153,8 @@ class Printer:
         for _ in range(1):
             time.sleep(10)
             response = self.write("M27") # check on SD print status
+            if response == "":
+                return False
             ratio = [int(s) for s in response.split()[-1].split("/") if s.isdigit()]
             if not len(ratio) == 2:
                 return False
