@@ -66,6 +66,12 @@ def connect_to_printers():
 
     return printer_list
 
+def connect_to_remover():
+    prefix = "/dev/serial/by-id/"
+    winch_port = ""
+    servo_port = ""
+    return Remover(winch_port, servo_port)
+
 def get_prints(file_name):
     print_list = []
     content = None
@@ -77,18 +83,21 @@ def get_prints(file_name):
     return print_list, len(print_list)
 
 
-def remove_print(printer_index, printer):
+def remove_print(remover, printer_index, printer):
     print("Removing Print from Printer {}".format(printer_index))
     printer.write("M104 S210") # Set extruder temperature to 199 degrees celcius
     print("a")
     printer.write("M140 S61k") # Set bed temperature to 59 degrees celcius
     print("a")
     time.sleep(2.4)
+    remover.remove_print(printer_index)
+    time.sleep(5.4)
 
     pass
 
 def main():
     printers = connect_to_printers()
+    remover = connect_to_remover()
     file_name = "print_que.txt"
     print_list, num_prints = get_prints(file_name)
     for i, p in enumerate(printers):
@@ -106,7 +115,7 @@ def main():
             # only check for if parts are done
             for i, p in enumerate(printers):
                 if p.is_finished():
-                    remove_print(i, p)
+                    remove_print(remover, i, p)
                 else:
                     print("Printer {} Not Finished yet".format(i))
         else:
@@ -120,7 +129,7 @@ def main():
                     continue
                 else:
                     if p.is_finished():
-                        remove_print(i, p)
+                        remove_print(remover, i, p)
                     else:
                         print("Printer {} Not Finished yet".format(i))
         time.sleep(0.0)
