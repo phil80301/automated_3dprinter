@@ -190,6 +190,8 @@ class Printer:
         # z 40 for now for speed of tests
         self.write("G0 X0 Y0 Z40 F10000")
         self.write("M400")
+        self.write("G0 X0 Y120 Z50 F10000")
+        self.write("M400")
         # self.write("G0 X0 Y100 Z100 F10000")
 
     def startup(self):
