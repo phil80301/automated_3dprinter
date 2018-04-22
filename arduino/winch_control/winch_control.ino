@@ -226,12 +226,8 @@ void handleIndexCommand() {
 
 void handleOffsetCommand() {
   int offset_steps = Serial.parseInt();
-  if (offset_steps >= 0) {
-    offset(offset_steps);
-    Serial.println("OK");
-  } else {
-    Serial.println("Error");
-  }
+  offset(offset_steps);
+  Serial.println("OK");
 }
 
 void handleHomeCommand() {
