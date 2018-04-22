@@ -1,6 +1,43 @@
 import time
 from printer_driver import Printer
 
+class Remover:
+    def __init__(self, port_servo, port_winch):
+        self.servo_ser = serial.Serial(sys.argv[1], 115200, timeout=30)
+        self.winch_ser = serial.Serial(sys.argv[2], 115200, timeout=30)
+
+        if servo_ser.readline().strip() != 'Ready':
+            raise ValueError('Received unexpected response from servo Arduino')
+
+        if winch_ser.readline().strip() != 'Ready':
+            raise ValueError('Received unexpected response from winch Arduino')
+
+    def send_command_winch(self, command):
+        self.winch_ser.write(command)
+        response = self.winch_ser.readline().strip()
+        if response != 'OK':
+            raise ValueError('Received unexpected response from Arduino: {}'.format(response))
+
+    def send_command_servo(self, command):
+        self.servo_ser.write(command)
+        response = self.servo_ser.readline().strip()
+        if response != 'OK':
+            raise ValueError('Received unexpected response from Arduino: {}'.format(response))
+
+    def remove_print(self, index):
+        send_command_winch("i {}".format(index))
+        send_command_servo("c")
+        send_command_winch("o 75")
+        send_command_servo("f")
+        send_command_winch("o -75")
+        send_command_servo("o")
+        send_command_winch("i 0")
+        send_command_winch("h")
+
+    def close(self):
+        self.servo_ser.close()
+        self.winch_ser.close()
+
 def connect_to_printers():
     ids = []
     mp_list = []
