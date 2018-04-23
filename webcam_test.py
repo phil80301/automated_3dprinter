@@ -11,7 +11,7 @@ if vc.isOpened(): # try to get the first frame
 else:
     rval = False
 
-folder = 'imgs/'
+folder = 'laps/'
 count = 0
 delay = 1
 while time.time() < endTime:

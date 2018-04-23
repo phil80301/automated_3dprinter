@@ -44,7 +44,6 @@ class Printer:
             self.ser = serial.Serial(port, baud, rtscts=False, timeout=5.0)
 
         time.sleep(0.5)
-        time.sleep(0.5)
 
         self.ser.reset_input_buffer()
         self.ser.reset_output_buffer()
@@ -79,11 +78,11 @@ class Printer:
             which is handy for gcode, but will screw up if you try to do binary communications.
         """
         self.ser.flush()
-        time.sleep(1.5)
+        time.sleep(0.5)
         self.ser.flushInput()
-        time.sleep(1.5)
+        time.sleep(0.5)
         self.ser.flushOutput()
-        time.sleep(2.5)
+        time.sleep(1.5)
         print(" ")
         print("__________________________")
         if self._verbose:
@@ -100,7 +99,7 @@ class Printer:
 
         # self.ser.write( (block + "\n").encode() )
         self.ser.write( (block + "\n"))
-        time.sleep(3.5)
+        time.sleep(1.5)
         print("Writing : " + block)
         if resp:
             return None
@@ -119,9 +118,9 @@ class Printer:
         #It WILL return "ok" once the command has finished sending and completed.
         print(expect)
         while True:
-            time.sleep(1)
+            time.sleep(0.7)
             response = self.ser.readline().strip()
-            time.sleep(1)
+            time.sleep(0.7)
             self.ser.flush()
             # response = self.ser.readline().strip()
             print("response", response)

@@ -1,15 +1,16 @@
 import time
 from printer_driver import Printer
+import serial
 
 class Remover:
     def __init__(self, port_servo, port_winch):
-        self.servo_ser = serial.Serial(sys.argv[1], 115200, timeout=30)
-        self.winch_ser = serial.Serial(sys.argv[2], 115200, timeout=30)
+        self.servo_ser = serial.Serial(port_servo, 115200, timeout=30)
+        self.winch_ser = serial.Serial(port_winch, 115200, timeout=30)
 
-        if servo_ser.readline().strip() != 'Ready':
+        if self.servo_ser.readline().strip() != 'Ready':
             raise ValueError('Received unexpected response from servo Arduino')
 
-        if winch_ser.readline().strip() != 'Ready':
+        if self.winch_ser.readline().strip() != 'Ready':
             raise ValueError('Received unexpected response from winch Arduino')
 
     def send_command_winch(self, command):
@@ -25,14 +26,16 @@ class Remover:
             raise ValueError('Received unexpected response from Arduino: {}'.format(response))
 
     def remove_print(self, index):
-        send_command_winch("i {}".format(index))
-        send_command_servo("c")
-        send_command_winch("o 75")
-        send_command_servo("f")
-        send_command_winch("o -75")
-        send_command_servo("o")
-        send_command_winch("i 0")
-        send_command_winch("h")
+        self.send_command_winch("i {}".format(index))
+        self.send_command_servo("c")
+        self.send_command_winch("o 75")
+        self.send_command_servo("f")
+        self.send_command_winch("o -75")
+        self.send_command_servo("o")
+
+    def winch_home(self):
+        self.send_command_servo("o")
+        self.send_command_winch("h")
 
     def close(self):
         self.servo_ser.close()
@@ -42,6 +45,7 @@ def connect_to_printers():
     ids = []
     mp_list = []
     baud_rate = 9600
+    baud_rate = 115200
     prefix = "/dev/serial/by-id/"
     # prefix = "COM"
 
@@ -50,13 +54,15 @@ def connect_to_printers():
     # ids.append("7")
     #ids.append("6")
     #ids.append("4")
+    # printer_levels = [1, 2, 3, 4]
+    printer_levels = [2]
 
     # ids.append("usb-Malyan_System_Malyan_3D_Printer_2058324D5748-if00")
     # mp_list.append(True)
-    # ids.append("usb-Malyan_System_LTD._Malyan_3D_Printer_Port_8D8B33775656-if00")
-    # mp_list.append(False)
-    ids.append("usb-Malyan_System_Malyan_3D_Printer_205932725748-if00")
-    mp_list.append(True)
+    ids.append("usb-Malyan_System_LTD._Malyan_3D_Printer_Port_8D8B33775656-if00")
+    mp_list.append(False)
+    # ids.append("usb-Malyan_System_Malyan_3D_Printer_205932725748-if00")
+    # mp_list.append(True)
     # ids.append("usb-Malyan_System_Malyan_3D_Printer_207E39595250-if00")
     # mp_list.append(True)
     printer_list = []
@@ -64,13 +70,13 @@ def connect_to_printers():
         printer_list.append(Printer(prefix + p, baud_rate, mp=mp))
     time.sleep(1)
 
-    return printer_list
+    return printer_list, printer_levels
 
 def connect_to_remover():
     prefix = "/dev/serial/by-id/"
-    winch_port = ""
-    servo_port = ""
-    return Remover(winch_port, servo_port)
+    winch_port = "usb-1a86_USB2.0-Serial-if00-port0"
+    servo_port = "usb-FTDI_FT232R_USB_UART_A601F7Y5-if00-port0"
+    return Remover(prefix + winch_port, prefix + servo_port)
 
 def get_prints(file_name):
     print_list = []
@@ -86,23 +92,29 @@ def get_prints(file_name):
 def remove_print(remover, printer_index, printer):
     print("Removing Print from Printer {}".format(printer_index))
     printer.write("M104 S210") # Set extruder temperature to 199 degrees celcius
-    print("a")
     printer.write("M140 S61k") # Set bed temperature to 59 degrees celcius
-    print("a")
-    time.sleep(2.4)
+    printer.write("G0 X0 Y120 F100000")
+    printer.write("M400")
     remover.remove_print(printer_index)
-    time.sleep(5.4)
-
-    pass
+    printer.write("G28 X Y")
+    remover.send_command_winch("o 40")
+    remover.send_command_servo("c")
+    remover.send_command_servo("o")
+    remover.send_command_servo("c")
+    remover.send_command_servo("o")
+    remover.winch_home()
+    time.sleep(1.0)
 
 def main():
-    printers = connect_to_printers()
+    printers, levels  = connect_to_printers()
     remover = connect_to_remover()
-    file_name = "print_que.txt"
-    print_list, num_prints = get_prints(file_name)
     for i, p in enumerate(printers):
         p.startup()
         print("Finished Setting Up Printer {}".format(i))
+    # remove_print(remover, 2, printers[0])
+    # return
+    file_name = "print_que.txt"
+    print_list, num_prints = get_prints(file_name)
 
     print("Done setting up Printers")
     print("Total of {} prints".format(num_prints))
@@ -115,7 +127,7 @@ def main():
             # only check for if parts are done
             for i, p in enumerate(printers):
                 if p.is_finished():
-                    remove_print(remover, i, p)
+                    remove_print(remover, levels[i], p)
                 else:
                     print("Printer {} Not Finished yet".format(i))
         else:
@@ -129,7 +141,7 @@ def main():
                     continue
                 else:
                     if p.is_finished():
-                        remove_print(remover, i, p)
+                        remove_print(remover, levels[i], p)
                     else:
                         print("Printer {} Not Finished yet".format(i))
         time.sleep(0.0)
