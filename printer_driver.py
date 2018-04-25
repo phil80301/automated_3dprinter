@@ -22,7 +22,7 @@ class Printer:
     _verbose = False
     block = "empty"
 
-    def __init__(self, port, baud, mp=True, verbose=False):
+    def __init__(self, port, baud, mp=True, id_=-1, verbose=False):
         """
             Opens the serial port and prepares for writing.
             port MUST be set, and values are operating system dependant.
@@ -30,6 +30,7 @@ class Printer:
         self._verbose = verbose
         self.busy = False
         self.is_mp = mp
+        self.id = id_
         print(port)
         print(mp)
 
@@ -51,6 +52,9 @@ class Printer:
         if self._verbose:
             print(sys.stdout, "Serial Open?: " + str(self.ser.isOpen()))
             print(sys.stdout, "Baud Rate: " + str(self.ser.baudrate))
+
+    def id(self):
+        return self.id
 
     def reset(self):
         """
@@ -78,11 +82,11 @@ class Printer:
             which is handy for gcode, but will screw up if you try to do binary communications.
         """
         self.ser.flush()
-        time.sleep(0.5)
+        time.sleep(0.3)
         self.ser.flushInput()
-        time.sleep(0.5)
+        time.sleep(0.3)
         self.ser.flushOutput()
-        time.sleep(1.5)
+        time.sleep(1.3)
         print(" ")
         print("__________________________")
         if self._verbose:
