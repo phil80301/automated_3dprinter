@@ -48,15 +48,14 @@ def remove_print(remover, printer_index, printer):
     remover.connect()
     printer.write("M104 S210") # Set extruder temperature to 199 degrees celcius
     printer.write("M140 S61k") # Set bed temperature to 59 degrees celcius
-    printer.write("G0 X0 Y120 Z40 F100000")
-    printer.write("M400")
+    printer.write("G0 X0 Y120 Z55 F100000")
+    remover.move(printer_index)
     remover.remove_print(printer_index)
     printer.write("G28 X Y")
-    printer.write("G0 Z100 F100000")
-    printer.write("M400")
+    time.sleep(0.2)
     remover.knock()
     remover.winch_home()
-    time.sleep(0.5)
+    time.sleep(0.2)
     remover.disconnect()
 
 def main(printers, remover):
@@ -81,6 +80,9 @@ def main(printers, remover):
                     print("Printer {} Not Finished yet".format(i))
         else:
             for i, p in enumerate(printers):
+		if print_index == num_prints - 1:
+                    break
+
                 if not p.is_busy():
                     print("Printer {} is starting new print".format(i))
                     new_print = print_list[print_index]
@@ -91,6 +93,12 @@ def main(printers, remover):
                 else:
                     if p.is_finished():
                         remove_print(remover, p.get_id(), p)
+                    	print("Printer {} is starting new print".format(i))
+                    	new_print = print_list[print_index]
+                    	print(new_print)
+                    	print_index += 1
+                    	p.start_print_from_sd(new_print)
+			break
                     else:
                         print("Printer {} Not Finished yet".format(i))
         time.sleep(0.1)
