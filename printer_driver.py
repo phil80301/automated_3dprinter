@@ -53,7 +53,7 @@ class Printer:
             print(sys.stdout, "Serial Open?: " + str(self.ser.isOpen()))
             print(sys.stdout, "Baud Rate: " + str(self.ser.baudrate))
 
-    def id(self):
+    def get_id(self):
         return self.id
 
     def reset(self):
@@ -199,7 +199,7 @@ class Printer:
 
     def startup(self):
         self.write("G28 X Y") # Home X and Y axis
-        self.write("M104 S199") # Set extruder temperature to 199 degrees celcius
-        self.write("M140 S59k") # Set bed temperature to 59 degrees celcius
-        self.write("M21") # Load SD card
-        time.sleep(0.4)
+        # self.write("M104 S199") # Set extruder temperature to 199 degrees celcius
+        # self.write("M140 S59k") # Set bed temperature to 59 degrees celcius
+        # self.write("M21") # Load SD card
+        time.sleep(0.1)

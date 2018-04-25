@@ -7,24 +7,24 @@ def connect_to_printers():
     mp_list = []
     baud_rate = 9600
     baud_rate = 115200
+    baud_rate = 38400 
     prefix = "/dev/serial/by-id/"
 
-    # printer_levels = [1, 2, 3, 4]
-    printer_levels = [1, 2]
+    printer_levels = [1, 2, 3, 4]
+    # printer_levels = [1, 2]
 
     ids.append("usb-Malyan_System_Malyan_3D_Printer_2058324D5748-if00")
     mp_list.append(True)
     ids.append("usb-Malyan_System_LTD._Malyan_3D_Printer_Port_8D8B33775656-if00")
     mp_list.append(False)
-    # ids.append("usb-Malyan_System_Malyan_3D_Printer_205932725748-if00")
-    # mp_list.append(True)
-    # ids.append("usb-Malyan_System_Malyan_3D_Printer_207E39595250-if00")
-    # mp_list.append(True)
+    ids.append("usb-Malyan_System_Malyan_3D_Printer_205932725748-if00")
+    mp_list.append(True)
+    ids.append("usb-Malyan_System_Malyan_3D_Printer_207E39595250-if00")
+    mp_list.append(True)
     printer_list = []
     for id_i, p, mp in zip(printer_levels, ids, mp_list):
         printer_list.append(Printer(prefix + p, baud_rate, mp=mp, id_=id_i))
-
-    time.sleep(1)
+    time.sleep(0.2)
     return printer_list
 
 def connect_to_remover():
@@ -60,9 +60,6 @@ def remove_print(remover, printer_index, printer):
     remover.disconnect()
 
 def main(printers, remover):
-    for i, p in enumerate(printers):
-        p.startup()
-        print("Finished Setting Up Printer {}".format(i))
     # remove_print(remover, 2, printers[0])
     # return
     file_name = "print_que.txt"
@@ -79,7 +76,7 @@ def main(printers, remover):
             # only check for if parts are done
             for i, p in enumerate(printers):
                 if p.is_finished():
-                    remove_print(remover, p.id(), p)
+                    remove_print(remover, p.get_id(), p)
                 else:
                     print("Printer {} Not Finished yet".format(i))
         else:
@@ -93,7 +90,7 @@ def main(printers, remover):
                     continue
                 else:
                     if p.is_finished():
-                        remove_print(remover, p.id(), p)
+                        remove_print(remover, p.get_id(), p)
                     else:
                         print("Printer {} Not Finished yet".format(i))
         time.sleep(0.1)
@@ -104,9 +101,10 @@ def remove_all(printers, remover):
     time.sleep(0.1)
     for p in printers:
         p.write("G0 X0 Y120 Z100 F100000")
-    p[0].write("M400")
+        p.write("G0 X0 Y120 Z100 F100000")
+    printers[0].write("M400")
     for p in printers:
-        remover.remove_print(p.id())
+        remover.remove_print(p.get_id())
         p.write("G28 X Y")
         remover.knock()
 
@@ -117,7 +115,10 @@ def remove_all(printers, remover):
 
 if __name__== "__main__":
     printers = connect_to_printers()
+    for i, p in enumerate(printers):
+        p.startup()
+        print("Finished Setting Up Printer {}".format(i))
     remover = connect_to_remover()
     # main(printers, remover)
-    # remove_all(printers, remover)
+    remove_all(printers, remover)
     print("FINISHED MAIN")

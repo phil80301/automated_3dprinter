@@ -53,22 +53,15 @@ def connect_to_printers():
     baud_rate = 9600
     baud_rate = 115200
     prefix = "/dev/serial/by-id/"
-    # prefix = "COM"
-
-    # ids.append("13")
-    # ids.append("5")
-    # ids.append("7")
-    #ids.append("6")
-    #ids.append("4")
     # printer_levels = [1, 2, 3, 4]
-    printer_levels = [3]
+    printer_levels = [1]
 
-    # ids.append("usb-Malyan_System_Malyan_3D_Printer_2058324D5748-if00")
-    # mp_list.append(True)
+    ids.append("usb-Malyan_System_Malyan_3D_Printer_2058324D5748-if00")
+    mp_list.append(True)
     # ids.append("usb-Malyan_System_LTD._Malyan_3D_Printer_Port_8D8B33775656-if00")
     # mp_list.append(False)
-    ids.append("usb-Malyan_System_Malyan_3D_Printer_205932725748-if00")
-    mp_list.append(True)
+    # ids.append("usb-Malyan_System_Malyan_3D_Printer_205932725748-if00")
+    # mp_list.append(True)
     # ids.append("usb-Malyan_System_Malyan_3D_Printer_207E39595250-if00")
     # mp_list.append(True)
     printer_list = []
