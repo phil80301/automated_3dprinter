@@ -82,11 +82,11 @@ class Printer:
             which is handy for gcode, but will screw up if you try to do binary communications.
         """
         self.ser.flush()
-        time.sleep(0.3)
+        time.sleep(0.1)
         self.ser.flushInput()
-        time.sleep(0.3)
+        time.sleep(0.1)
         self.ser.flushOutput()
-        time.sleep(1.3)
+        time.sleep(.5)
         print(" ")
         print("__________________________")
         if self._verbose:
@@ -103,7 +103,7 @@ class Printer:
 
         # self.ser.write( (block + "\n").encode() )
         self.ser.write( (block + "\n"))
-        time.sleep(1.5)
+        time.sleep(0.5)
         print("Writing : " + block)
         if resp:
             return None
@@ -122,9 +122,9 @@ class Printer:
         #It WILL return "ok" once the command has finished sending and completed.
         print(expect)
         while True:
-            time.sleep(0.7)
+            time.sleep(0.3)
             response = self.ser.readline().strip()
-            time.sleep(0.7)
+            time.sleep(0.2)
             self.ser.flush()
             # response = self.ser.readline().strip()
             print("response", response)
@@ -157,9 +157,9 @@ class Printer:
         print("____________________________________")
         print("Printing file: " + sd_file)
         print(self.write("M23 " + sd_file))
-        time.sleep(0.5)
+        time.sleep(0.1)
         print(self.write("M24"))
-        time.sleep(0.5)
+        time.sleep(0.1)
 
     def is_busy(self):
         return self.busy
@@ -193,13 +193,13 @@ class Printer:
         # z 40 for now for speed of tests
         self.write("G0 X0 Y0 Z40 F10000")
         self.write("M400")
-        self.write("G0 X0 Y120 Z50 F10000")
+        self.write("G0 X0 Y120 Z40 F10000")
         self.write("M400")
         # self.write("G0 X0 Y100 Z100 F10000")
 
     def startup(self):
-        self.write("G28 X Y") # Home X and Y axis
-        # self.write("M104 S199") # Set extruder temperature to 199 degrees celcius
-        # self.write("M140 S59k") # Set bed temperature to 59 degrees celcius
-        # self.write("M21") # Load SD card
+        self.write("G28") # Home X and Y axis
+        self.write("M104 S199") # Set extruder temperature to 199 degrees celcius
+        self.write("M140 S59k") # Set bed temperature to 59 degrees celcius
+        self.write("M21") # Load SD card
         time.sleep(0.1)

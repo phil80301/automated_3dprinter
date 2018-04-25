@@ -48,7 +48,7 @@ def remove_print(remover, printer_index, printer):
     remover.connect()
     printer.write("M104 S210") # Set extruder temperature to 199 degrees celcius
     printer.write("M140 S61k") # Set bed temperature to 59 degrees celcius
-    printer.write("G0 X0 Y120 Z100 F100000")
+    printer.write("G0 X0 Y120 Z40 F100000")
     printer.write("M400")
     remover.remove_print(printer_index)
     printer.write("G28 X Y")
@@ -100,8 +100,7 @@ def remove_all(printers, remover):
     remover.connect()
     time.sleep(0.1)
     for p in printers:
-        p.write("G0 X0 Y120 Z100 F100000")
-        p.write("G0 X0 Y120 Z100 F100000")
+        p.write("G0 X0 Y120 Z40 F100000")
     printers[0].write("M400")
     for p in printers:
         remover.remove_print(p.get_id())
@@ -119,6 +118,6 @@ if __name__== "__main__":
         p.startup()
         print("Finished Setting Up Printer {}".format(i))
     remover = connect_to_remover()
-    # main(printers, remover)
-    remove_all(printers, remover)
+    main(printers, remover)
+    # remove_all(printers, remover)
     print("FINISHED MAIN")
