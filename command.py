@@ -33,11 +33,17 @@ class Remover:
         self.send_command_winch("o -75")
         self.send_command_servo("o")
 
+    def open(self):
+        self.send_command_servo("o")
+
+    def close(self):
+        self.send_command_servo("c")
+
     def winch_home(self):
         self.send_command_servo("o")
         self.send_command_winch("h")
 
-    def close(self):
+    def close_ser(self):
         self.servo_ser.close()
         self.winch_ser.close()
 
@@ -55,14 +61,14 @@ def connect_to_printers():
     #ids.append("6")
     #ids.append("4")
     # printer_levels = [1, 2, 3, 4]
-    printer_levels = [1, 2]
+    printer_levels = [3]
 
-    ids.append("usb-Malyan_System_Malyan_3D_Printer_2058324D5748-if00")
-    mp_list.append(True)
-    ids.append("usb-Malyan_System_LTD._Malyan_3D_Printer_Port_8D8B33775656-if00")
-    mp_list.append(False)
-    # ids.append("usb-Malyan_System_Malyan_3D_Printer_205932725748-if00")
+    # ids.append("usb-Malyan_System_Malyan_3D_Printer_2058324D5748-if00")
     # mp_list.append(True)
+    # ids.append("usb-Malyan_System_LTD._Malyan_3D_Printer_Port_8D8B33775656-if00")
+    # mp_list.append(False)
+    ids.append("usb-Malyan_System_Malyan_3D_Printer_205932725748-if00")
+    mp_list.append(True)
     # ids.append("usb-Malyan_System_Malyan_3D_Printer_207E39595250-if00")
     # mp_list.append(True)
     printer_list = []
@@ -97,7 +103,7 @@ def remove_print(remover, printer_index, printer):
     # printer.write("M400")
     remover.remove_print(printer_index)
     printer.write("G28 X Y")
-    remover.send_command_winch("o 35")
+    remover.send_command_winch("o 40")
     remover.send_command_servo("c")
     remover.send_command_servo("o")
     remover.send_command_servo("c")
@@ -105,51 +111,8 @@ def remove_print(remover, printer_index, printer):
     remover.winch_home()
     time.sleep(1.0)
 
-def main():
-    printers, levels  = connect_to_printers()
-    remover = connect_to_remover()
-    for i, p in enumerate(printers):
-        p.startup()
-        print("Finished Setting Up Printer {}".format(i))
-    remove_print(remover, 2, printers[0])
-    return
-    file_name = "print_que.txt"
-    print_list, num_prints = get_prints(file_name)
-
-    print("Done setting up Printers")
-    print("Total of {} prints".format(num_prints))
-
-    finished = False
-    print_index = 0
-    finished_prints = 0
-    while not finished:
-        if print_index == num_prints - 1:
-            # only check for if parts are done
-            for i, p in enumerate(printers):
-                if p.is_finished():
-                    remove_print(remover, levels[i], p)
-                else:
-                    print("Printer {} Not Finished yet".format(i))
-        else:
-            for i, p in enumerate(printers):
-                if not p.is_busy():
-                    print("Printer {} is starting new print".format(i))
-                    new_print = print_list[print_index]
-                    print(new_print)
-                    print_index += 1
-                    p.start_print_from_sd(new_print)
-                    continue
-                else:
-                    if p.is_finished():
-                        remove_print(remover, levels[i], p)
-                    else:
-                        print("Printer {} Not Finished yet".format(i))
-        time.sleep(0.0)
-
-
-
-
-
-if __name__== "__main__":
-    main()
-    print("FINISHED MAIN")
+printers, levels  = connect_to_printers()
+remover = connect_to_remover()
+for i, p in enumerate(printers):
+    p.startup()
+    print("Finished Setting Up Printer {}".format(i))
