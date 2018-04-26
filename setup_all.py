@@ -125,8 +125,5 @@ if __name__== "__main__":
     printers = connect_to_printers()
     for i, p in enumerate(printers):
         p.startup()
+	p.write("G0 Z60 F1000000")
         print("Finished Setting Up Printer {}".format(i))
-    remover = connect_to_remover()
-    main(printers, remover)
-    # remove_all(printers, remover)
-    print("FINISHED MAIN")

@@ -40,9 +40,11 @@ class Printer:
         #Timeout value 10" max travel, 1RPM, 20 threads/in = 200 seconds
         # self.ser = serial.Serial(port, baud, rtscts=True, timeout=15)
         if self.is_mp:
-            self.ser = serial.Serial(port, baud, rtscts=True, timeout=25.0)
+            # self.ser = serial.Serial(port, baud, rtscts=True, timeout=25.0)
+            self.ser = serial.Serial(port, baud, rtscts=True, timeout=1.2)
         else:
-            self.ser = serial.Serial(port, baud, rtscts=False, timeout=25.0)
+            # self.ser = serial.Serial(port, baud, rtscts=False, timeout=25.0)
+            self.ser = serial.Serial(port, baud, rtscts=False, timeout=1.2)
 
         time.sleep(0.5)
 
@@ -86,7 +88,7 @@ class Printer:
         self.ser.flushInput()
         time.sleep(0.1)
         self.ser.flushOutput()
-        time.sleep(2.5)
+        time.sleep(1.0)
         print(" ")
         print("__________________________")
         if self._verbose:
@@ -103,7 +105,7 @@ class Printer:
 
         # self.ser.write( (block + "\n").encode() )
         self.ser.write( (block + "\n"))
-        time.sleep(2.5)
+        time.sleep(1.9)
         print("Writing : " + block)
         if resp:
             return None
@@ -124,7 +126,7 @@ class Printer:
         while True:
             time.sleep(0.1)
             response = self.ser.readline().strip()
-            time.sleep(0.2)
+            time.sleep(0.01)
             # response = self.ser.readline().strip()
             print("response", response)
             print("response type", type(response))

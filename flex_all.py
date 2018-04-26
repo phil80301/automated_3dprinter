@@ -11,7 +11,7 @@ def connect_to_printers():
     prefix = "/dev/serial/by-id/"
 
     printer_levels = [1, 2, 3, 4]
-    # printer_levels = [1, 2]
+    # printer_levels = [1, 4]
 
     ids.append("usb-Malyan_System_Malyan_3D_Printer_2058324D5748-if00")
     mp_list.append(True)
@@ -109,7 +109,7 @@ def remove_all(printers, remover):
     remover.connect()
     time.sleep(0.1)
     for p in printers:
-        p.write("G0 X0 Y120 Z40 F100000")
+        p.write("G0 X0 Y120 Z55 F100000")
     printers[0].write("M400")
     for p in printers:
         remover.remove_print(p.get_id())
@@ -117,16 +117,15 @@ def remove_all(printers, remover):
         remover.knock()
 
     remover.winch_home()
-    time.sleep(0.5)
+    time.sleep(0.2)
     remover.disconnect()
     time.sleep(0.1)
 
 if __name__== "__main__":
     printers = connect_to_printers()
-    for i, p in enumerate(printers):
-        p.startup()
-        print("Finished Setting Up Printer {}".format(i))
+    # for i, p in enumerate(printers):
+        # p.startup()
+        # print("Finished Setting Up Printer {}".format(i))
     remover = connect_to_remover()
-    main(printers, remover)
-    # remove_all(printers, remover)
+    remove_all(printers, remover)
     print("FINISHED MAIN")

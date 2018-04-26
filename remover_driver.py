@@ -71,10 +71,9 @@ class Remover:
         if not self.connected:
             raise ValueError('Not Connected')
             return
-        self.send_command_winch("o 35")
+        self.send_command_winch("o 30")
         self.send_command_servo("c")
         self.send_command_servo("o")
-        self.send_command_winch("o -35")
 
     def winch_home(self):
         if not self.connected:
