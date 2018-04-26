@@ -41,10 +41,10 @@ class Printer:
         # self.ser = serial.Serial(port, baud, rtscts=True, timeout=15)
         if self.is_mp:
             # self.ser = serial.Serial(port, baud, rtscts=True, timeout=25.0)
-            self.ser = serial.Serial(port, baud, rtscts=True, timeout=1.2)
+            self.ser = serial.Serial(port, baud, rtscts=True, timeout=31.2)
         else:
             # self.ser = serial.Serial(port, baud, rtscts=False, timeout=25.0)
-            self.ser = serial.Serial(port, baud, rtscts=False, timeout=1.2)
+            self.ser = serial.Serial(port, baud, rtscts=False, timeout=31.2)
 
         time.sleep(0.5)
 

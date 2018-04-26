@@ -1,3 +1,4 @@
+import keyboard
 import time
 from printer_driver import Printer
 from remover_driver import Remover
@@ -10,17 +11,17 @@ def connect_to_printers():
     baud_rate = 38400 
     prefix = "/dev/serial/by-id/"
 
-    printer_levels = [1, 2, 3, 4]
-    # printer_levels = [1, 2]
+    # printer_levels = [1, 2, 3, 4]
+    printer_levels = [1, 2]
 
     ids.append("usb-Malyan_System_Malyan_3D_Printer_2058324D5748-if00")
     mp_list.append(True)
     ids.append("usb-Malyan_System_LTD._Malyan_3D_Printer_Port_8D8B33775656-if00")
     mp_list.append(False)
-    ids.append("usb-Malyan_System_Malyan_3D_Printer_205932725748-if00")
-    mp_list.append(True)
-    ids.append("usb-Malyan_System_Malyan_3D_Printer_207E39595250-if00")
-    mp_list.append(True)
+    # ids.append("usb-Malyan_System_Malyan_3D_Printer_205932725748-if00")
+    # mp_list.append(True)
+    # ids.append("usb-Malyan_System_Malyan_3D_Printer_207E39595250-if00")
+    # mp_list.append(True)
     printer_list = []
     for id_i, p, mp in zip(printer_levels, ids, mp_list):
         printer_list.append(Printer(prefix + p, baud_rate, mp=mp, id_=id_i))
@@ -59,6 +60,18 @@ def remove_print(remover, printer_index, printer):
     time.sleep(0.1)
     remover.disconnect()
 
+
+def interrupt(printers, remover):
+    print('Canceling all prints')
+    for p in printers:
+        p.write("M25")
+    for p in printers:
+        p.write("G0 Z55 F1000000")
+    print('removing prints from all printers')
+    remove_all(printers, remover)
+    for p in printers:
+        p.busy = False
+
 def main(printers, remover):
     # remove_print(remover, 2, printers[0])
     # return
@@ -72,6 +85,31 @@ def main(printers, remover):
     print_index = 0
     finished_prints = 0
     while not finished:
+        if keyboard.is_pressed('k'): # if key 'k' is pressed
+            print('you pressed k')
+            interrupt(printers, remover)
+            continue
+
+        if keyboard.is_pressed('1'): # if key 'k' is pressed
+            print('you pressed 1')
+            interrupt([printers[0]], remover)
+            continue
+
+        if keyboard.is_pressed('2'): # if key 'k' is pressed
+            print('you pressed 2')
+            interrupt([printers[1]], remover)
+            continue
+
+        if keyboard.is_pressed('3'): # if key 'k' is pressed
+            print('you pressed 1')
+            interrupt([printers[2]], remover)
+            continue
+
+        if keyboard.is_pressed('4'): # if key 'k' is pressed
+            print('you pressed 1')
+            interrupt([printers[3]], remover)
+            continue
+
         if print_index == num_prints - 1:
             # only check for if parts are done
             for i, p in enumerate(printers):
@@ -81,7 +119,7 @@ def main(printers, remover):
                     print("Printer {} Not Finished yet".format(i))
         else:
             for i, p in enumerate(printers):
-		if print_index == num_prints - 1:
+                if print_index == num_prints - 1:
                     break
 
                 if not p.is_busy():
@@ -94,12 +132,12 @@ def main(printers, remover):
                 else:
                     if p.is_finished():
                         remove_print(remover, p.get_id(), p)
-                    	print("Printer {} is starting new print".format(i))
-                    	new_print = print_list[print_index]
-                    	print(new_print)
-                    	print_index += 1
-                    	p.start_print_from_sd(new_print)
-			break
+                        print("Printer {} is starting new print".format(i))
+                        new_print = print_list[print_index]
+                        print(new_print)
+                        print_index += 1
+                        p.start_print_from_sd(new_print)
+                        break
                     else:
                         print("Printer {} Not Finished yet".format(i))
         time.sleep(0.01)
@@ -109,7 +147,7 @@ def remove_all(printers, remover):
     remover.connect()
     time.sleep(0.1)
     for p in printers:
-        p.write("G0 X0 Y120 Z40 F100000")
+        p.write("G0 X0 Y120 Z55 F100000")
     printers[0].write("M400")
     for p in printers:
         remover.remove_print(p.get_id())
@@ -117,7 +155,7 @@ def remove_all(printers, remover):
         remover.knock()
 
     remover.winch_home()
-    time.sleep(0.5)
+    time.sleep(0.3)
     remover.disconnect()
     time.sleep(0.1)
 

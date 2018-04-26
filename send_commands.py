@@ -44,15 +44,10 @@ def print_from_file(filename, printer):
 print_file = "print_que.txt"
 # printer = Printer("/dev/serial/by-id/usb-Malyan_System_Malyan_3D_Printer_207E39595250-if00", 9600, verbose=True)
 # printer = Printer("/dev/serial/by-id/usb-Malyan_System_Malyan_3D_Printer_205932725748-if00", 115200, verbose=True)
-printer = Printer("COM13", 115200, verbose=True)
+port = "/dev/serial/by-id/usb-Malyan_System_LTD._Malyan_3D_Printer_Port_8D8B33775656-if00"
+printer = Printer(port, 38400, mp=False, id_=2)
 time.sleep(0.5)
 printer.write("G28 X Y", resp=True)
-printer.write("M21", resp=True)
-printer.write("M105", resp=True)
-time.sleep(0.2)
-printer.write("M105", resp=False)
-time.sleep(0.2)
-printer.write("M105", resp=False)
 time.sleep(0.2)
 # printer.write("M400")
 # printer.write("G90")
