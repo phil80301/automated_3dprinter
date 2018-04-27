@@ -35,11 +35,19 @@ void flexGripper(int angle) {
   delay(1000);
 }
 
+void attachServos() {
+  left_servo.attach(LEFT_SERVO_PIN);
+  right_servo.attach(RIGHT_SERVO_PIN);
+}
+
+void detachServos() {
+  left_servo.detach();
+  right_servo.detach();
+}
+
 void setup() {
   Serial.begin(115200);
 
-  left_servo.attach(LEFT_SERVO_PIN);
-  right_servo.attach(RIGHT_SERVO_PIN);
   left_servo.write(LEFT_SERVO_OPEN_ANGLE);
   right_servo.write(RIGHT_SERVO_OPEN_ANGLE);
 
@@ -70,6 +78,14 @@ void loop() {
       break;
     case 'F':
       flexGripper(Serial.parseFloat());
+      Serial.println("OK");
+      break;
+    case 'e':
+      attachServos();
+      Serial.println("OK");
+      break;
+    case 'd':
+      detachServos();
       Serial.println("OK");
       break;
     default:
