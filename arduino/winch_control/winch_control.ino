@@ -5,7 +5,7 @@
 #define STEPPER_ENABLE 4
 #define LIMIT_SWITCH 10
 
-#define NUM_INDEXES 4
+#define NUM_INDICES 4
 #define HOMING_TIMEOUT 5000
 #define TOP_POS 3500
 #define DEBOUNCE_TIMEOUT 50
@@ -216,7 +216,7 @@ void moveToIndex(int index) {
 
 void handleIndexCommand() {
   int target_index = Serial.parseInt();
-  if (target_index >= 0 && target_index <= NUM_INDEXES) {
+  if (target_index >= 0 && target_index <= NUM_INDICES) {
     moveToIndex(target_index);
     Serial.println("OK");
   } else {
