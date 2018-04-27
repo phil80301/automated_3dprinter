@@ -12,28 +12,27 @@ Servo right_servo;
 #define LEFT_SERVO_CLOSE_ANGLE 85
 #define RIGHT_SERVO_CLOSE_ANGLE 95
 
-#define LEFT_SERVO_FLEX_ANGLE 120
-#define RIGHT_SERVO_FLEX_ANGLE 60
+#define FLEX_ANGLE 45
 
 void closeGripper() {
   left_servo.write(LEFT_SERVO_CLOSE_ANGLE);
   right_servo.write(RIGHT_SERVO_CLOSE_ANGLE);
-  delay(1500);
+  delay(1000);
 }
 
 void openGripper() {
   left_servo.write(LEFT_SERVO_OPEN_ANGLE);
   right_servo.write(RIGHT_SERVO_OPEN_ANGLE);
-  delay(1500);
+  delay(1000);
 }
 
-void flexGripper() {
-  left_servo.write(LEFT_SERVO_FLEX_ANGLE);
-  right_servo.write(RIGHT_SERVO_FLEX_ANGLE);
-  delay(1500);
+void flexGripper(int angle) {
+  left_servo.write(LEFT_SERVO_CLOSE_ANGLE + angle);
+  right_servo.write(RIGHT_SERVO_CLOSE_ANGLE - angle);
+  delay(1000);
   left_servo.write(LEFT_SERVO_CLOSE_ANGLE);
   right_servo.write(RIGHT_SERVO_CLOSE_ANGLE);
-  delay(1500);
+  delay(1000);
 }
 
 void setup() {
@@ -66,7 +65,11 @@ void loop() {
       Serial.println("OK");
       break;
     case 'f':
-      flexGripper();
+      flexGripper(FLEX_ANGLE);
+      Serial.println("OK");
+      break;
+    case 'F':
+      flexGripper(Serial.parseFloat());
       Serial.println("OK");
       break;
     default:
