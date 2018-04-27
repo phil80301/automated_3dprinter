@@ -41,10 +41,10 @@ class Printer:
         # self.ser = serial.Serial(port, baud, rtscts=True, timeout=15)
         if self.is_mp:
             # self.ser = serial.Serial(port, baud, rtscts=True, timeout=25.0)
-            self.ser = serial.Serial(port, baud, rtscts=True, timeout=31.2)
+            self.ser = serial.Serial(port, baud, rtscts=True, timeout=51.2)
         else:
             # self.ser = serial.Serial(port, baud, rtscts=False, timeout=25.0)
-            self.ser = serial.Serial(port, baud, rtscts=False, timeout=31.2)
+            self.ser = serial.Serial(port, baud, rtscts=False, timeout=51.2)
 
         time.sleep(0.5)
 
@@ -166,8 +166,7 @@ class Printer:
         return self.busy
 
     def is_finished(self):
-        for _ in range(1):
-            time.sleep(1)
+        for _ in range(1): 
             response = self.write("M27") # check on SD print status
             if response == "":
                 return False
@@ -197,4 +196,5 @@ class Printer:
         self.write("M104 S199") # Set extruder temperature to 199 degrees celcius
         self.write("M140 S59k") # Set bed temperature to 59 degrees celcius
         self.write("M21") # Load SD card
+        self.write("G0 Z5 F10000")
         time.sleep(0.1)
