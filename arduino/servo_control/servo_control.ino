@@ -17,22 +17,22 @@ Servo right_servo;
 void closeGripper() {
   left_servo.write(LEFT_SERVO_CLOSE_ANGLE);
   right_servo.write(RIGHT_SERVO_CLOSE_ANGLE);
-  delay(1000);
+  delay(1500);
 }
 
 void openGripper() {
   left_servo.write(LEFT_SERVO_OPEN_ANGLE);
   right_servo.write(RIGHT_SERVO_OPEN_ANGLE);
-  delay(1000);
+  delay(1500);
 }
 
 void flexGripper(int angle) {
   left_servo.write(LEFT_SERVO_CLOSE_ANGLE + angle);
   right_servo.write(RIGHT_SERVO_CLOSE_ANGLE - angle);
-  delay(1000);
+  delay(1500);
   left_servo.write(LEFT_SERVO_CLOSE_ANGLE);
   right_servo.write(RIGHT_SERVO_CLOSE_ANGLE);
-  delay(1000);
+  delay(1500);
 }
 
 void attachServos() {
