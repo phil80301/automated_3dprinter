@@ -11,9 +11,9 @@ if vc.isOpened(): # try to get the first frame
 else:
     rval = False
 
-folder = 'imgs/'
+folder = 'laps/'
 count = 0
-delay = 1
+delay = 0
 while time.time() < endTime:
     cv2.imshow("preview", frame)
     rval, frame = vc.read()

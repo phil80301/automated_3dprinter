@@ -22,7 +22,7 @@ class Printer:
     _verbose = False
     block = "empty"
 
-    def __init__(self, port, baud, mp=True, verbose=False):
+    def __init__(self, port, baud, mp=True, id_=-1, verbose=False):
         """
             Opens the serial port and prepares for writing.
             port MUST be set, and values are operating system dependant.
@@ -30,6 +30,7 @@ class Printer:
         self._verbose = verbose
         self.busy = False
         self.is_mp = mp
+        self.id = id_
         print(port)
         print(mp)
 
@@ -39,11 +40,12 @@ class Printer:
         #Timeout value 10" max travel, 1RPM, 20 threads/in = 200 seconds
         # self.ser = serial.Serial(port, baud, rtscts=True, timeout=15)
         if self.is_mp:
-            self.ser = serial.Serial(port, baud, rtscts=True, timeout=5.0)
+            # self.ser = serial.Serial(port, baud, rtscts=True, timeout=25.0)
+            self.ser = serial.Serial(port, baud, rtscts=True, timeout=31.2)
         else:
-            self.ser = serial.Serial(port, baud, rtscts=False, timeout=5.0)
+            # self.ser = serial.Serial(port, baud, rtscts=False, timeout=25.0)
+            self.ser = serial.Serial(port, baud, rtscts=False, timeout=31.2)
 
-        time.sleep(0.5)
         time.sleep(0.5)
 
         self.ser.reset_input_buffer()
@@ -52,6 +54,9 @@ class Printer:
         if self._verbose:
             print(sys.stdout, "Serial Open?: " + str(self.ser.isOpen()))
             print(sys.stdout, "Baud Rate: " + str(self.ser.baudrate))
+
+    def get_id(self):
+        return self.id
 
     def reset(self):
         """
@@ -79,11 +84,11 @@ class Printer:
             which is handy for gcode, but will screw up if you try to do binary communications.
         """
         self.ser.flush()
-        time.sleep(1.5)
+        time.sleep(0.1)
         self.ser.flushInput()
-        time.sleep(1.5)
+        time.sleep(0.1)
         self.ser.flushOutput()
-        time.sleep(2.5)
+        time.sleep(1.0)
         print(" ")
         print("__________________________")
         if self._verbose:
@@ -100,7 +105,7 @@ class Printer:
 
         # self.ser.write( (block + "\n").encode() )
         self.ser.write( (block + "\n"))
-        time.sleep(3.5)
+        time.sleep(1.9)
         print("Writing : " + block)
         if resp:
             return None
@@ -119,10 +124,9 @@ class Printer:
         #It WILL return "ok" once the command has finished sending and completed.
         print(expect)
         while True:
-            time.sleep(1)
+            time.sleep(0.1)
             response = self.ser.readline().strip()
-            time.sleep(1)
-            self.ser.flush()
+            time.sleep(0.01)
             # response = self.ser.readline().strip()
             print("response", response)
             print("response type", type(response))
@@ -154,9 +158,9 @@ class Printer:
         print("____________________________________")
         print("Printing file: " + sd_file)
         print(self.write("M23 " + sd_file))
-        time.sleep(0.5)
+        time.sleep(0.1)
         print(self.write("M24"))
-        time.sleep(0.5)
+        time.sleep(0.1)
 
     def is_busy(self):
         return self.busy
@@ -172,15 +176,11 @@ class Printer:
                 return False
             print(ratio)
             r = ratio[0]/ratio[1]
-            print(self.write("M400"))
-            print(response)
             if r == 1:
                 print("Finished Printing")
                 time.sleep(1.0)
                 self.busy = False
-                self.removal_pos()
-                self.write("M400") # Waitf for current move to finish
-                time.sleep(1.0)
+                time.sleep(0.2)
                 return True
         return False
 
@@ -188,13 +188,13 @@ class Printer:
         self.write("G28 X Y") # Home X and Y axis
         self.write("G90")
         # z 40 for now for speed of tests
-        self.write("G0 X0 Y0 Z40 F10000")
+        self.write("G0 X0 Y0 Z50 F10000")
         self.write("M400")
         # self.write("G0 X0 Y100 Z100 F10000")
 
     def startup(self):
-        self.write("G28 X Y") # Home X and Y axis
+        self.write("G28") # Home X and Y axis
         self.write("M104 S199") # Set extruder temperature to 199 degrees celcius
         self.write("M140 S59k") # Set bed temperature to 59 degrees celcius
         self.write("M21") # Load SD card
-        time.sleep(0.4)
+        time.sleep(0.1)
