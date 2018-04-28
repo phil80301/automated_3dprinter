@@ -11,15 +11,15 @@ if vc.isOpened(): # try to get the first frame
 else:
     rval = False
 
-folder = 'laps/'
+folder = 'printer/'
 count = 0
-delay = 0
+delay = 0.1
 while time.time() < endTime:
     cv2.imshow("preview", frame)
     rval, frame = vc.read()
     frame_num = "%08d" % (count,)
     cv2.imwrite(folder + frame_num + '.jpg', frame)
-    k = cv2.waitKey(1)
+    k = cv2.waitKey(1000)
     count = count + 1
     time.sleep(delay)
 

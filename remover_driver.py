@@ -60,26 +60,35 @@ class Remover:
         if not self.connected:
             raise ValueError('Not Connected')
             return
+        self.send_command_servo("e")
         self.send_command_winch("i {}".format(index))
         self.send_command_servo("c")
-        self.send_command_winch("o 75")
-        self.send_command_servo("f")
-        self.send_command_winch("o -75")
+        self.send_command_winch("o 100")
+        self.send_command_servo("F 53")
+        self.send_command_servo("F -40")
+        self.send_command_servo("F 53")
+	if index == 2:
+            self.send_command_winch("o -93")
+	else:
+            self.send_command_winch("o -99")
         self.send_command_servo("o")
 
     def knock(self):
         if not self.connected:
             raise ValueError('Not Connected')
             return
-        self.send_command_winch("o 30")
+        self.send_command_winch("o 25")
         self.send_command_servo("c")
         self.send_command_servo("o")
+        self.send_command_servo("d")
 
     def winch_home(self):
         if not self.connected:
             raise ValueError('Not Connected')
             return
+        self.send_command_servo("e")
         self.send_command_servo("o")
+        self.send_command_servo("d")
         self.send_command_winch("h")
 
     def connect(self):
